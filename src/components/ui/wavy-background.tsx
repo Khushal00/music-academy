@@ -102,7 +102,7 @@ export const WavyBackground = ({
     ctx.fillRect(0, 0, dimensions.width, dimensions.height);
     drawWave(5);
     animationIdRef.current = requestAnimationFrame(render);
-  }, [backgroundFill, dimensions, waveOpacity]);
+  }, [backgroundFill, dimensions, waveOpacity, drawWave]);
 
   useEffect(() => {
     const handleResize = () => {
