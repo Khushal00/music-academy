@@ -9,25 +9,27 @@ import {
   useSpring,
 } from "framer-motion";
 
-export const AnimatedTooltip = ({
-  items,
-}: {
-  items: {
-    id: number;
-    name: string;
-    designation: string;
-    image: string;
-  }[];
-}) => {
+interface TooltipItem {
+  id: number;
+  name: string;
+  designation: string;
+  image: string;
+}
+
+interface AnimatedTooltipProps {
+  items: TooltipItem[];
+}
+
+export const AnimatedTooltip: React.FC<AnimatedTooltipProps> = ({ items }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const springConfig = { stiffness: 100, damping: 5 };
-  const x = useMotionValue(0); // going to set this value on mouse move
-  // rotate the tooltip
+  const x = useMotionValue(0);
+  
   const rotate = useSpring(
     useTransform(x, [-100, 100], [-45, 45]),
     springConfig
   );
-  // translate the tooltip
+  
   const translateX = useSpring(
     useTransform(x, [-100, 100], [-50, 50]),
     springConfig
@@ -36,7 +38,7 @@ export const AnimatedTooltip = ({
   const handleMouseMove = (event: React.MouseEvent<HTMLImageElement>) => {
     const target = event.target as HTMLElement;
     const halfWidth = target.offsetWidth / 2;
-    x.set(event.nativeEvent.offsetX - halfWidth); // set the x value, which is then used in transform and rotate
+    x.set(event.nativeEvent.offsetX - halfWidth);
   };
 
   return (
@@ -48,7 +50,7 @@ export const AnimatedTooltip = ({
           onMouseEnter={() => setHoveredIndex(item.id)}
           onMouseLeave={() => setHoveredIndex(null)}
         >
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout">
             {hoveredIndex === item.id && (
               <motion.div
                 initial={{ opacity: 0, y: 20, scale: 0.6 }}

@@ -7,39 +7,41 @@ import React, {
   useContext,
   useRef,
   useEffect,
-  useCallback,
 } from "react";
 
-const MouseEnterContext = createContext<
-  [boolean, React.Dispatch<React.SetStateAction<boolean>>] | undefined
->(undefined);
+// Define types for the context
+type MouseEnterContextType = [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+
+const MouseEnterContext = createContext<MouseEnterContextType | undefined>(undefined);
+
+interface CardContainerProps {
+  children?: React.ReactNode;
+  className?: string;
+  containerClassName?: string;
+}
 
 export const CardContainer = ({
   children,
   className,
   containerClassName,
-}: {
-  children?: React.ReactNode;
-  className?: string;
-  containerClassName?: string;
-}) => {
+}: CardContainerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMouseEntered, setIsMouseEntered] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
-    const { left, top, width, height } =
-      containerRef.current.getBoundingClientRect();
+    const { left, top, width, height } = containerRef.current.getBoundingClientRect();
     const x = (e.clientX - left - width / 2) / 25;
     const y = (e.clientY - top - height / 2) / 25;
     containerRef.current.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
   };
 
-  const handleMouseEnter = () => {
+  // Use underscore to indicate intentionally unused parameter
+  const handleMouseEnter = (_: React.MouseEvent<HTMLDivElement>) => {
     setIsMouseEntered(true);
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (_: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     setIsMouseEntered(false);
     containerRef.current.style.transform = `rotateY(0deg) rotateX(0deg)`;
@@ -76,17 +78,19 @@ export const CardContainer = ({
   );
 };
 
+interface CardBodyProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
 export const CardBody = ({
   children,
   className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
+}: CardBodyProps) => {
   return (
     <div
       className={cn(
-        "h-96 w-96 [transform-style:preserve-3d]  [&>*]:[transform-style:preserve-3d]",
+        "h-96 w-96 [transform-style:preserve-3d] [&>*]:[transform-style:preserve-3d]",
         className
       )}
     >
@@ -94,6 +98,18 @@ export const CardBody = ({
     </div>
   );
 };
+
+interface CardItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  as?: React.ElementType;
+  children: React.ReactNode;
+  className?: string;
+  translateX?: number | string;
+  translateY?: number | string;
+  translateZ?: number | string;
+  rotateX?: number | string;
+  rotateY?: number | string;
+  rotateZ?: number | string;
+}
 
 export const CardItem = ({
   as: Tag = "div",
@@ -106,21 +122,12 @@ export const CardItem = ({
   rotateY = 0,
   rotateZ = 0,
   ...rest
-}: {
-  as?: React.ElementType;
-  children: React.ReactNode;
-  className?: string;
-  translateX?: number | string;
-  translateY?: number | string;
-  translateZ?: number | string;
-  rotateX?: number | string;
-  rotateY?: number | string;
-  rotateZ?: number | string;
-}) => {
+}: CardItemProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isMouseEntered] = useMouseEnter();
 
-  const handleAnimations = useCallback(() => {
+  // Memoize handleAnimations to prevent unnecessary recreations
+  const handleAnimations = React.useCallback(() => {
     if (!ref.current) return;
     if (isMouseEntered) {
       ref.current.style.transform = `translateX(${translateX}px) translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`;
@@ -144,7 +151,7 @@ export const CardItem = ({
   );
 };
 
-export const useMouseEnter = () => {
+export const useMouseEnter = (): MouseEnterContextType => {
   const context = useContext(MouseEnterContext);
   if (context === undefined) {
     throw new Error("useMouseEnter must be used within a MouseEnterProvider");

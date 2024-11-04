@@ -1,10 +1,8 @@
-"use client"
+'use client'
 
-import dynamic from "next/dynamic"
 import { cn } from "@/utils/utils";
 import React from "react";
-
-const MotionDiv = dynamic(() => import("framer-motion").then(mod => mod.motion.div), { ssr: false });
+import { motion } from "framer-motion";
 
 export const BackgroundGradient = ({
   children,
@@ -27,7 +25,7 @@ export const BackgroundGradient = ({
   };
   return (
     <div className={cn("relative p-[4px] group", containerClassName)}>
-      <MotionDiv
+      <motion.div
         variants={animate ? variants : undefined}
         initial={animate ? "initial" : undefined}
         animate={animate ? "animate" : undefined}
@@ -48,7 +46,7 @@ export const BackgroundGradient = ({
           " bg-[radial-gradient(circle_farthest-side_at_0_100%,#00ccb1,transparent),radial-gradient(circle_farthest-side_at_100%_0,#7b61ff,transparent),radial-gradient(circle_farthest-side_at_100%_100%,#ffc414,transparent),radial-gradient(circle_farthest-side_at_0_0,#1ca0fb,#141316)]"
         )}
       />
-      <MotionDiv
+      <motion.div
         variants={animate ? variants : undefined}
         initial={animate ? "initial" : undefined}
         animate={animate ? "animate" : undefined}
