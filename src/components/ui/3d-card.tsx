@@ -36,7 +36,6 @@ export const CardContainer = ({
     containerRef.current.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
   };
 
-  // Use underscore to indicate intentionally unused parameter
   const handleMouseEnter = (_: React.MouseEvent<HTMLDivElement>) => {
     setIsMouseEntered(true);
   };
